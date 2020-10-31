@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <!-- 
+    为一个对象提供一个待用品或者占位符
+
+    场景
+      图片预加载，虚拟合并代理，在一段时间内的请求收集到缓存中再统一请求，缓存代理计算开销大的运算结果
+   -->
+   <script>
+      // 1 先定义本体
+      var setImage = (function () {
+        var img = document.createElement('img')
+        document.body.append(img)
+        return {
+          setSrc: function (src) {
+            img.src = src
+          }          
+        }
+      })()
+      // 定义代理对象
+      var proxyImg = (function () {
+        // 用来获取准备要请求的图片
+        var img = new Image()
+        img.onload = function () {
+          // 设置图片真实拿到的src
+          // 模拟长时间加载图片过程
+          setTimeout(() => {
+            setImage.setSrc(this.src)
+          }, 200)
+        }
+        return  {
+          setSrc: function (src) {
+            // 给本体设置gif图
+            setImage.setSrc('https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=352556266,211490599&fm=26&gp=0.jpg')
+            // 真实图片交给代理来处理
+            img.src = src
+          }
+        }
+      })()
+      proxyImg.setSrc('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1604135189097&di=e354f418cdedeeda00f036050d34b5bb&imgtype=0&src=http%3A%2F%2Fimg.ptfish.com%2Fattachment%2Fforum%2F201904%2F18%2F162814lihs6069ntas4ysk.gif')
+
+   </script>
+</body>
+</html>

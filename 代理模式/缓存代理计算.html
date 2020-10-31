@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // 乘
+    var mult = function () {
+      var a = 1
+      for(var i = 0; i< arguments.length; i++) {
+        a = a * arguments[i]
+      }
+      return a
+    }
+    // 加
+    var plus = function() {
+      var a = 0
+      for(var i = 0; i< arguments.length; i++) {
+        a = a + arguments[i]
+      }
+      return a
+    }
+    function createProxyFactory (fn) {
+      var cache = {} // 缓存对象
+      
+      return function () {
+        var args = Array.prototype.join.call(arguments, ',')
+        console.log(cache);
+        // 有缓存结果就返回
+        if (cache[args]) {
+          return cache[args]
+        }
+        // 计算结果并返回放到缓存中
+        return cache[args] = fn.apply(this, arguments)
+      }
+    }
+    var proxyMult = createProxyFactory(mult)
+    var proxyPlus = createProxyFactory(plus)
+    console.log(proxyMult(1,2,3,4));
+    console.log(proxyMult(1,2,3,4));
+    
+    console.log(proxyPlus(1,2,3,4));
+    console.log(proxyPlus(1,2,3,4));
+  </script>
+</body>
+</html>
