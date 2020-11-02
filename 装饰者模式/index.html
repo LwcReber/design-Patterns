@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <!-- 使用AOP装饰函数 -->
+  <!-- 数据统计上报 -->
+  <script>
+    Function.prototype.before = function(beforeFn) {
+      var self = this
+      return function () {
+        beforeFn.apply(this, arguments)
+        // 返回执行原函数的结果
+        return self.apply(this, arguments)
+      }
+    }
+    // 原函数保持原有的干净
+    var ajax = function (type, url, param) {
+      console.log(param);
+      
+    }
+    var getToken = function () {
+      return 'token'
+    }
+    ajax = ajax.before(function (type, url, param) {
+      param.Token = getToken()
+    })
+    ajax('get', 'http:xxx/info', {name: 'fadfds'})
+    
+  </script>
+</body>
+</html>
