@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <!-- 定义，使多个对象都有机会处理请求，从而避免请求的发送者和接受者之间的耦合关系
+    将这些对象连成一条链，沿着这条链传递请求，直到有一个对象处理它为止
+  -->
+  <script>
+    var order500 =function (orderType, pay, stock) {
+      if (orderType === 1 && pay === true) {
+        console.log('500 得100优惠');
+      } else {
+        return 'next'
+      }
+    }
+    var order200 = function (orderType, pay, stock) {
+      if (orderType === 2 && pay === true) {
+        console.log('200得50优惠');
+      } else {
+        return 'next'
+      }
+    }
+    var orderNormal = function (orderType, pay, stock) {
+      if (stock > 0) {
+        console.log('普通购买');
+        
+      } else { 
+        console.log('库存不足');
+      }
+    
+    }
+    var Chain = function (fn) {
+      this.fn = fn
+      this.successor = null
+    }
+    Chain.prototype.setNextSuccessor = function (successor) {
+      return this.successor = successor
+    }
+    Chain.prototype.passRequest = function () {
+      var ret = this.fn.apply(this, arguments)
+      if (ret === 'next') {
+        return this.successor && this.successor.passRequest.apply(this.successor, arguments)
+      }
+      return ret
+    }
+    var chainOrder500 = new Chain(order500)
+    var chainOrder200 = new Chain(order200)
+    var chainOrderNormal = new Chain(orderNormal)
+    chainOrder500.setNextSuccessor(chainOrder200)
+    chainOrder200.setNextSuccessor(chainOrderNormal)
+    chainOrder500.passRequest(1, true, 500)
+    chainOrder500.passRequest(2, true, 500)
+    chainOrder500.passRequest(3, true, 500)
+    chainOrder500.passRequest(1, false, 0)
+    
+    
+  </script>
+</body>
+</html>
